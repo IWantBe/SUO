@@ -1,0 +1,6 @@
+*.pyc
+
+datasets/*
+!datasets/*.py
+
+.conda/*
