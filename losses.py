@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def lmmd_loss(
+def sa_loss(
     source,
     target,
     s_label,
@@ -87,7 +87,7 @@ def lmmd_loss(
     return loss
 
 
-def minimum_class_confusion_loss(target_output: torch.Tensor, temperature: float = 2.5) -> torch.Tensor:
+def cu_loss(target_output: torch.Tensor, temperature: float = 2.5) -> torch.Tensor:
 
     def entropy(input_):
         epsilon = 1e-5
@@ -102,5 +102,5 @@ def minimum_class_confusion_loss(target_output: torch.Tensor, temperature: float
     entropy_weight = (batch_size * entropy_weight / torch.sum(entropy_weight)).unsqueeze(dim=1)  # batch_size x 1
     class_confusion_matrix = torch.mm((predictions * entropy_weight).transpose(1, 0), predictions)  # num_classes x num_classes
     class_confusion_matrix = class_confusion_matrix / torch.sum(class_confusion_matrix, dim=1)
-    mcc_loss = (torch.sum(class_confusion_matrix) - torch.trace(class_confusion_matrix)) / num_classes
-    return mcc_loss
+    loss = (torch.sum(class_confusion_matrix) - torch.trace(class_confusion_matrix)) / num_classes
+    return loss
